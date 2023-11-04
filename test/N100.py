@@ -12,10 +12,13 @@ from save_txt import save_lists_to_txt
 from datetime import datetime
 import random
 from play_sound import play_sound
+from pulse_generator import pulse_generator, pulse_generator_standard
 
 attention_record_list = []
 generate_record_list = []
 Response_record_list = []
+waiting_time = 5
+counting = False
 sound_name = ["cello_stream.wav","clarinet_stream.wav","oboe_stream.wav"]
 def play_sound_rand():
     random_number = random.randint(0, 2)
@@ -28,14 +31,9 @@ def Main_GUI(test_id):
     ##################### initial value ####################
     sg_theme = sg.theme("Default1")
     waiting_time = 5
-    counting = False
     ##################### initial value ####################
     
     ##################### layout ###########################
-    layout_1 = [
-        [sg.Text(waiting_time,key = "Timing Counting", font = ("Times New Roman",52))],
-        [sg.Button('Start', key='Start_BUTTON',size = (5,2)),sg.Button('Exit', key='EXIT_BUTTON',size = (5,2))]
-    ]
     
     layout_2 = [
         [sg.Button('Left', key='Left_BUTTON',size = (5,2)),sg.Button('Right', key='Right_BUTTON',size = (5,2))],
@@ -48,36 +46,11 @@ def Main_GUI(test_id):
         [sg.Button('LOW', key='LOW_BUTTON',size = (5,2))],
         [sg.Button('Exit', key='EXIT_BUTTON',size = (5,2))]
     ]
-    window = sg.Window("Counting", layout_1, finalize=True,resizable=True)
-    time_window = window["Timing Counting"]
+    
+    window2 = sg.Window("Choice", layout_2, finalize=True,resizable=True)
     ##################### layout ###########################
     
     ##################### GUI Handling #####################
-    while True:
-        event, values = window.read(timeout=0.1)
-        if event in ['EXIT_BUTTON', sg.WIN_CLOSED]:
-            window.close()
-            return
-        if event == 'Start_BUTTON':
-            counting = True
-            start_time = time.time()
-        else:
-            pass
-        if counting:
-            # Calculate the elapsed time
-            elapsed_time = time.time() - start_time
-            
-            # Calculate the remaining time in the countdown
-            remaining_time = max(0, waiting_time - int(elapsed_time))
-            
-            time_window.update(value = remaining_time)
-            
-            # Check if the countdown has reached 0
-            if remaining_time == 0:
-                window.close()
-                window2 = sg.Window("Choice", layout_2, finalize=True,resizable=True)
-                break
-                counting = False
     while True:
         event, values = window2.read(timeout=0.1)
         if event in ['EXIT_BUTTON', sg.WIN_CLOSED]:
@@ -92,11 +65,12 @@ def Main_GUI(test_id):
             break
         else:
             pass
-    play_sound_rand()
     window2.close()
     window3 = sg.Window("Response", layout_3, finalize=True,resizable=True)    
+    play_sound_rand()
+    pulse_generator()
     while True:
-        event, values = window3.read(timeout=0.1)
+        event, values = window3.read()
         if event in ['EXIT_BUTTON', sg.WIN_CLOSED]:
             window3.close()
             #window2.close()
@@ -113,7 +87,38 @@ def Main_GUI(test_id):
         else:
             pass
     ##################### GUI Handling #####################
-for i in range(1,2):
+layout_1 = [
+    [sg.Text(waiting_time,key = "Timing Counting", font = ("Times New Roman",52))],
+    [sg.Button('Start', key='Start_BUTTON',size = (5,2)),sg.Button('Exit', key='EXIT_BUTTON',size = (5,2))]
+]    
+sg_theme = sg.theme("Default1")
+window = sg.Window("Counting", layout_1, finalize=True,resizable=True)
+time_window = window["Timing Counting"]
+
+while True:
+    event, values = window.read(timeout=0.1)
+    if event in ['EXIT_BUTTON', sg.WIN_CLOSED]:
+        window.close()
+    if event == 'Start_BUTTON':
+        counting = True
+        start_time = time.time()
+    else:
+        pass
+    if counting:
+        # Calculate the elapsed time
+        elapsed_time = time.time() - start_time
+        
+        # Calculate the remaining time in the countdown
+        remaining_time = max(0, waiting_time - int(elapsed_time))
+        
+        time_window.update(value = remaining_time)
+        
+        # Check if the countdown has reached 0
+        if remaining_time == 0:
+            window.close()
+            break
+            counting = False
+for i in range(1,10):
     Main_GUI(i)
 now = datetime.now()
 formatted_date_time = now.strftime("%Y_%m_%d_%H_%M_%S.txt")
