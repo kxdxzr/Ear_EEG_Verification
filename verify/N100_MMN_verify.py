@@ -8,33 +8,48 @@ Created on Mon Oct  9 17:24:47 2023
 from plot_Raw_EEG import plot_All_Channels_EEG
 from load_EEG_all_channels_uV import load_EEG_all_channels
 from spiking_detection import detect_spikes
+from read_first_line_to_list import read_first_line_to_list
+from PSD_six_channels import PD_EEG
+from extract_only_signal import extract_only_signal
 
-path = "Z:/data_collected/NeoRec_2023-10-09_21-32-23.bdf"
+path = "Z:/data_collected/Sample Test Result/N100_2023-10-17_21-55-22.bdf"
 sampling_rate = 5000
 last = 1
 before_spike = 0.2
-exclude_channels = [10,11]
 vertical_lines = [0.2]
 
 EEG_data, channel_names = load_EEG_all_channels(path = path, 
                                  BPFfc = [1,30],
                                  sampling_rate = sampling_rate)
-spike_time_points = detect_spikes(EEG_data[-2], 5e5, sampling_rate,before_spike)
-standard_time_points = detect_spikes(EEG_data[-1], 5e5, sampling_rate,before_spike)
+spike_time_points = detect_spikes(EEG_data, 5e5, sampling_rate, channel_names, 'pulse', before_spike)
+standard_time_points = detect_spikes(EEG_data, 5e5, sampling_rate, channel_names, 'standard', before_spike)
 print(len(spike_time_points))
 print(len(standard_time_points))
+extract_channels = ['pulse', 'standard']
+EEG_data = extract_only_signal(EEG_data, channel_names, extract_channels)
 
 for i in range(0,10):
     time = spike_time_points[i]
+    extra_title_1 = read_first_line_to_list('../test/2023_10_15_16_24_12.txt',0)[i]
+    extra_title_2 = read_first_line_to_list('../test/2023_10_15_16_24_12.txt',1)[i]
+    extra_title_3 = read_first_line_to_list('../test/2023_10_15_16_24_12.txt',0)[i]
+    extra_title = extra_title_1 + "_" + extra_title_2
     plot_All_Channels_EEG(sampling_rate,
                           time,
                           last,
                           EEG_data,
                           before_spike,
                           vertical_lines,
-                          exclude_channels,
+                          extra_title = extra_title,
                           channel_names = channel_names)
-'''
+    '''
+    PD_EEG(sampling_rate, 
+               time,
+               last, 
+               EEG_data, 
+               channel_names = channel_names,
+               xlim = [0,30])
+
 for i in range(0,10):
     time = standard_time_points[i]
     plot_All_Channels_EEG(sampling_rate,

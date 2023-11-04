@@ -10,7 +10,15 @@ import numpy as np
 from load_EEG_all_channels import load_EEG_all_channels
 from extract_arrays import extract_arrays
 
-def detect_spikes(signal, threshold, sampling_rate,before_spike = 0):
+def detect_spikes(EEG_signal, threshold, sampling_rate, channel_names, target_channel, before_spike = 0):
+    i = 0
+    while i < len(channel_names):
+        print(channel_names[i])
+        if channel_names[i] == target_channel:
+            signal = EEG_signal[i]
+            break
+        i+=1
+    
     # Find the spikes in the signal
     spike_indices, _ = sig.find_peaks(signal, height=threshold)
 
@@ -32,15 +40,15 @@ def detect_spikes(signal, threshold, sampling_rate,before_spike = 0):
 # Example usage:
 if __name__ == "__main__":
     path = 'Z:/data_collected/NeoRec_2023-10-09_14-57-30.bdf'
-    sampling_rate = 1e6
+    sampling_rate = 5000
     # Simulated spike signal (replace with your actual signal)
-    signal = load_EEG_all_channels(path=path,
+    EEG_signal, channel_names = load_EEG_all_channels(path=path,
                                    sampling_rate=sampling_rate)
     # Set the detection threshold and sampling rate
     threshold = 5e5  # Adjust this threshold as needed
-    
+    target_channel = 'pulse'
     # Detect spikes and print the time points
-    spike_time_points = detect_spikes(signal[-1], threshold, sampling_rate)
+    spike_time_points = detect_spikes(EEG_signal, threshold, sampling_rate, channel_names, target_channel)
     print("Spike Time Points:")
     for time_point in spike_time_points:
         print(time_point)

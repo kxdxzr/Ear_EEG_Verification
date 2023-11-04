@@ -47,7 +47,7 @@ def alpha_power(channel, sampling_rate, time, last, arr1, freq_range):
     power = 10 * np.log10(power) - 10 * np.log10(mean_power)
     return power, n_steps
 
-def alpha_power_all(sampling_rate, time, last, EEG_data2, freq_range = (8, 12)):
+def alpha_power_all(sampling_rate, time, last, EEG_data2, freq_range = (8, 12), channel_name_1 = channel_name_1):
     first_point = mins_to_points(time, sampling_rate)
     
     number_of_signals = EEG_data2.shape[0]

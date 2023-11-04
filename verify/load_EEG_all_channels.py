@@ -13,10 +13,10 @@ def load_EEG_all_channels(path,
                           sampling_rate = 5000, 
                           filtering = True, 
                           BPFfc = [5,100], 
-                          BSFfc = [53,47], 
                           BPF_order = 3, 
                           BSF_order = 3, 
-                          not_filtering_channels = [10,11]):
+                          not_filtering_channels = [],
+                          extract_channels = ['pulse','standard']):
     '''
     path: Path of the .bdf file 
     sampling_rate: Sampling rate
@@ -39,6 +39,13 @@ def load_EEG_all_channels(path,
     for i in range(number_of_signals):
         channel_names.append(hdl.getSignalLabel(i).strip())
     print(channel_names)
+    
+    i = 0
+    while i < len(channel_names):
+        if channel_names[i] in extract_channels:
+            not_filtering_channels.append(i)
+        i+=1
+    
     signal_list = list(range(0, number_of_signals))
     # Create a list to store arrays (2D array of EEG_data2)
     all_EEG_data2 = []

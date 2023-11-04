@@ -17,10 +17,12 @@ def plot_All_Channels_EEG(sampling_rate,
                           EEG_data2, 
                           start_point = 0, 
                           vertial_line = [],
-                          exclude_channels = [],
-                          channel_names = []):
+                          channel_names = ["T3", "T4", "T5", "T6", "O1", "O2", "1", "2", "3", "4", "Ref1", "Ref2"],
+                          vertical_color = [],
+                          extra_title = ""):
     time_point = mins_to_points(time, sampling_rate)  # Define mins_to_points function
-    number_of_channels = EEG_data2.shape[0] - len(exclude_channels)
+    
+    number_of_channels = EEG_data2.shape[0]
     ncols = 3
     nrows = math.ceil(number_of_channels / ncols)
     
@@ -29,11 +31,10 @@ def plot_All_Channels_EEG(sampling_rate,
     else:
         fig, axs = plt.subplots(nrows=nrows, ncols=ncols, figsize=(15, 5))
 
-    fig.canvas.manager.set_window_title(time)
+    fig.canvas.manager.set_window_title("{} {}".format(time, extra_title))
     channel_name = ["PPG", "EEG"]
     
     siganl_list = range(EEG_data2.shape[0])
-    siganl_list = [x for x in siganl_list if x not in exclude_channels]
     
     for i in siganl_list:
         channel = i
@@ -46,14 +47,14 @@ def plot_All_Channels_EEG(sampling_rate,
 
         if number_of_channels <= ncols:
             for i in vertial_line:
-                axs[col].axvline(x=i, color='red', linestyle='--')
+                axs[col].axvline(x=i, color="Red", linestyle='--')
             axs[col].plot(x, EEG_data)
             axs[col].set_title('Channel {}'.format(channel_names[channel]))
             axs[col].set_ylabel('EEG Value')
             axs[col].set_xlabel('Time [sec]')
         else:
             for i in vertial_line:
-                axs[row, col].axvline(x=i, color='red', linestyle='--')
+                axs[row, col].axvline(x=i, color="Red", linestyle='--')
             axs[row, col].plot(x, EEG_data)
             axs[row, col].set_title('Channel {}'.format(channel_names[channel]))
             axs[row, col].set_ylabel('EEG Value')
