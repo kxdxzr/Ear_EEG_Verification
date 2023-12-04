@@ -9,10 +9,13 @@ from plot_Raw_EEG import plot_All_Channels_EEG
 from load_EEG_all_channels_uV import load_EEG_all_channels
 from spiking_detection import detect_spikes
 from read_first_line_to_list import read_first_line_to_list
-from PSD_six_channels import PD_EEG
+from PSD_six_channels_resampling import PD_EEG
 from extract_only_signal import extract_only_signal
-path = "Z:/data_collected/NeoRec_2023-10-25_16-30-45.bdf"
-log_path = '../test/N_back_2023_10_25_16_30_47.txt'
+from montage.mean_and_replace import mean_and_replace
+from extract_arrays import extract_arrays
+
+path = "Z:/data_collected/N_back_2023-10-22_15-13-50.bdf"
+log_path = '../test/2023_10_22_15_19_43.txt'
 sampling_rate = 5000
 last = 2
 before_spike = 0.5
@@ -27,13 +30,16 @@ print(len(spike_time_points))
 #EEG_data = mean_and_replace(EEG_data, [-3,-2,-1])
 #EEG_data = extract_arrays(EEG_data, [9])
 EEG_data = extract_only_signal(EEG_data, channel_names, extract_channels)
-for i in range(0,91):
+EEG_data = mean_and_replace(EEG_data,[-3,-2,-1])
+EEG_data = extract_arrays(EEG_data,[1,-1])
+
+for i in range(1):
     time = standard_time_points[i]
     extra_title_1 = read_first_line_to_list(log_path,0)[i//48]
-    extra_title_2 = read_first_line_to_list(log_path,1)[i]
-    extra_title_3 = read_first_line_to_list(log_path,2)[i]
-    extra_title = extra_title_1 + "_" + extra_title_2 + "_" + extra_title_3
-    print(extra_title)
+    #extra_title_2 = read_first_line_to_list(log_path,1)[i]
+    #extra_title_3 = read_first_line_to_list(log_path,2)[i]
+    #extra_title = extra_title_1 + "_" + extra_title_2 + "_" + extra_title_3
+    #print(extra_title)
     '''
     plot_All_Channels_EEG(sampling_rate,
                           time,
@@ -50,6 +56,7 @@ for i in range(0,91):
                channel_names = channel_names,
                vertial_line = [7,12],
                xlim = [0, 100],
-               nperseg = sampling_rate,
-               extra_title = extra_title)
+               nperseg = 4900,
+               extra_title = "",
+               show_SNR = False)
     

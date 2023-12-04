@@ -9,8 +9,10 @@ from plot_Raw_EEG import plot_All_Channels_EEG
 from load_EEG_all_channels_uV import load_EEG_all_channels
 from spiking_detection import detect_spikes
 from read_first_line_to_list import read_first_line_to_list
-from PSD_six_channels import PD_EEG
+from PSD_six_channels_resampling import PD_EEG
 from extract_only_signal import extract_only_signal
+from montage.mean_and_replace import mean_and_replace
+from extract_arrays import extract_arrays
 
 path = "Z:/data_collected/Sample Test Result/N100_2023-10-17_21-55-22.bdf"
 sampling_rate = 5000
@@ -27,8 +29,10 @@ print(len(spike_time_points))
 print(len(standard_time_points))
 extract_channels = ['pulse', 'standard']
 EEG_data = extract_only_signal(EEG_data, channel_names, extract_channels)
+EEG_data = mean_and_replace(EEG_data,[-3,-2,-1])
+EEG_data = extract_arrays(EEG_data,[1,-1])
 
-for i in range(0,10):
+for i in range(0,100):
     time = spike_time_points[i]
     extra_title_1 = read_first_line_to_list('../test/2023_10_15_16_24_12.txt',0)[i]
     extra_title_2 = read_first_line_to_list('../test/2023_10_15_16_24_12.txt',1)[i]

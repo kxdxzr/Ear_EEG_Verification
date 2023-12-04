@@ -10,7 +10,7 @@ from load_EEG_all_channels_uV import load_EEG_all_channels
 from spiking_detection import detect_spikes
 from read_first_line_to_list import read_first_line_to_list
 
-path = "Z:/data_collected/Sample Test Result/N400_2023-10-15_16-19-31.bdf"
+path = "Z:/data_collected/NeoRec_2023-11-23_21-51-52.bdf"
 sampling_rate = 5000
 last = 1
 before_spike = 0.2
@@ -35,4 +35,4 @@ for i in range(0,10):
                           before_spike,
                           vertical_lines,
                           channel_names = channel_names,
-                          extra_title = extra_title)
+                          extra_title = "")

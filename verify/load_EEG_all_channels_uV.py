@@ -14,10 +14,9 @@ def load_EEG_all_channels(path,
                           sampling_rate = 5000, 
                           filtering = True, 
                           BPFfc = [5,100], 
-                          BSFfc = [53,47], 
                           BPF_order = 3, 
                           BSF_order = 3, 
-                          not_filtering_channels = [10,11]):
+                          not_filtering_channels = []):
     '''
     path: Path of the .bdf file 
     sampling_rate: Sampling rate
