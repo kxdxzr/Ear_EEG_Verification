@@ -14,7 +14,7 @@ from extract_only_signal import extract_only_signal
 from montage.mean_and_replace import mean_and_replace
 from extract_arrays import extract_arrays
 
-path = "Z:/data_collected/Sample Test Result/N100_2023-10-17_21-55-22.bdf"
+path = "Z:/data_collected/Sample Test Result/MMN_2023-10-09_21-32-23.bdf"
 sampling_rate = 5000
 last = 1
 before_spike = 0.2
@@ -34,18 +34,17 @@ EEG_data = extract_arrays(EEG_data,[1,-1])
 
 for i in range(0,100):
     time = spike_time_points[i]
-    extra_title_1 = read_first_line_to_list('../test/2023_10_15_16_24_12.txt',0)[i]
-    extra_title_2 = read_first_line_to_list('../test/2023_10_15_16_24_12.txt',1)[i]
-    extra_title_3 = read_first_line_to_list('../test/2023_10_15_16_24_12.txt',0)[i]
-    extra_title = extra_title_1 + "_" + extra_title_2
+    #extra_title_1 = read_first_line_to_list('../test/2023_10_15_16_24_12.txt',0)[i]
+    #extra_title_2 = read_first_line_to_list('../test/2023_10_15_16_24_12.txt',1)[i]
+    #extra_title_3 = read_first_line_to_list('../test/2023_10_15_16_24_12.txt',0)[i]
+    #extra_title = extra_t_1 + "_" + extra_title_2
     plot_All_Channels_EEG(sampling_rate,
                           time,
                           last,
                           EEG_data,
                           before_spike,
                           vertical_lines,
-                          extra_title = extra_title,
-                          channel_names = channel_names)
+                          channel_names = ["a)","b)"])
     '''
     PD_EEG(sampling_rate, 
                time,

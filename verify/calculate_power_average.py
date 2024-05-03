@@ -41,31 +41,31 @@ def calculate_power_average(arr1, sampling_freq, freq_range):
 
     return avg_power
 
-
-#path = "NeoRec_2023-03-02_16-35-13.bdf"
-#path = "NeoRec_2023-03-02_16-52-04.bdf"
-#path = "NeoRec_2023-03-10_14-37-42.bdf"
-path = "D:/USYD/BMET4111/Electrode/data_collected/Extend_electrode/Straight_4_electride+2_fixed_reference_silver/Alpha_2023-04-28_15-05-52.bdf"
-
-hdl = edfreader.EDFreader(path)
-
-print("Number of signals: %d" %(hdl.getNumSignals()))
-print("Number of datarecords: %d" %(hdl.getNumDataRecords()))
-
-filetype = hdl.getFileType()
-
-edfsignals = hdl.getNumSignals()
-
-n = edfsignals
-# channel number starts with 0
-channel = 0
-sampling_rate = 5000
-last = 23
-
-#time_list = ["0.10","1.10","2.20","3.00","3.50"]
-#time_list = ["0.30","1.10","3.10","4.50","5.50"]
-time_list = ["0.20","1.20","2.20","3.20","4.20"]
-
-for i in time_list:
-    calculate_power_average_difference(hdl,i, last,sampling_rate, [8,12])
+if __name__ == "__main__":
+    #path = "NeoRec_2023-03-02_16-35-13.bdf"
+    #path = "NeoRec_2023-03-02_16-52-04.bdf"
+    #path = "NeoRec_2023-03-10_14-37-42.bdf"
+    path = "D:/USYD/BMET4111/Electrode/data_collected/Extend_electrode/Straight_4_electride+2_fixed_reference_silver/Alpha_2023-04-28_15-05-52.bdf"
     
+    hdl = edfreader.EDFreader(path)
+    
+    print("Number of signals: %d" %(hdl.getNumSignals()))
+    print("Number of datarecords: %d" %(hdl.getNumDataRecords()))
+    
+    filetype = hdl.getFileType()
+    
+    edfsignals = hdl.getNumSignals()
+    
+    n = edfsignals
+    # channel number starts with 0
+    channel = 0
+    sampling_rate = 5000
+    last = 23
+    
+    #time_list = ["0.10","1.10","2.20","3.00","3.50"]
+    #time_list = ["0.30","1.10","3.10","4.50","5.50"]
+    time_list = ["0.20","1.20","2.20","3.20","4.20"]
+    
+    for i in time_list:
+        calculate_power_average_difference(hdl,i, last,sampling_rate, [8,12])
+        

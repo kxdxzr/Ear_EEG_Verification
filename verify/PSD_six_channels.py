@@ -41,7 +41,7 @@ def PD_EEG(sampling_rate,
 
     if number_of_signals <= ncols:
         nrows = 1
-        fig, axs = plt.subplots(nrows=1, ncols=number_of_signals, figsize=(10, 4))
+        fig, axs = plt.subplots(nrows=1, ncols=number_of_signals, figsize=(10, 6))
     else:
         nrows = math.ceil(number_of_signals / ncols)
         fig, axs = plt.subplots(nrows=nrows, ncols=ncols, figsize=(10, 10))
@@ -70,7 +70,7 @@ def PD_EEG(sampling_rate,
             for i in horizontal_line:
                 axs[col].axhline(y=i, color="Red", linestyle='--')
             axs[col].plot(f, Pxx)  # dB
-            axs[col].set_title('{}, SNR: {:.2f} dB'.format(channel_names[channel], SNR))
+            axs[col].set_title('{}'.format(channel_names[channel], SNR), loc='left')
             axs[col].set_xlim(xlim)
 
             if min_Pxx < 0:

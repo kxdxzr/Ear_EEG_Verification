@@ -32,10 +32,10 @@ print(len(spike_time_points))
 EEG_data = extract_only_signal(EEG_data, channel_names, extract_channels)
 EEG_data = mean_and_replace(EEG_data,[-3,-2,-1])
 EEG_data = extract_arrays(EEG_data,[1,-1])
-
-for i in range(1):
+channel_names = ["a)","b)"]
+for i in range(0,100):
     time = standard_time_points[i]
-    extra_title_1 = read_first_line_to_list(log_path,0)[i//48]
+    #extra_title_1 = read_first_line_to_list(log_path,0)[i//48]
     #extra_title_2 = read_first_line_to_list(log_path,1)[i]
     #extra_title_3 = read_first_line_to_list(log_path,2)[i]
     #extra_title = extra_title_1 + "_" + extra_title_2 + "_" + extra_title_3
@@ -46,8 +46,7 @@ for i in range(1):
                           last,
                           EEG_data,
                           before_spike,
-                          channel_names = channel_names,
-                          extra_title = extra_title)
+                          channel_names = channel_names)
     '''
     PD_EEG(sampling_rate, 
                time,
@@ -56,7 +55,8 @@ for i in range(1):
                channel_names = channel_names,
                vertial_line = [7,12],
                xlim = [0, 100],
-               nperseg = 4900,
+               nperseg = 5000,
                extra_title = "",
                show_SNR = False)
+
     

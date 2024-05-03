@@ -10,8 +10,10 @@ from mins_to_points import mins_to_points
 from EDFlib import edfreader
 import math
 
+plt.rcParams.update({'font.size': 30})
+
 channel_name_1 = ["T3", "T4", "T5", "T6", "O1", "O2", "1", "2", "3", "4", "Ref1", "Ref2"]
-channel_name_2 = ["Scalp","Ear"]
+channel_name_2 = ["a)","b)"]
 
 def alpha_power(channel, sampling_rate, time, last, arr1, freq_range):
     # define the window length and step size in seconds
@@ -40,6 +42,7 @@ def alpha_power(channel, sampling_rate, time, last, arr1, freq_range):
         
         # calculate the power in the frequency range by summing the squared amplitudes of the FFT values
         power[i] = np.sum(np.abs(fft[idx_start:idx_end])**2)
+    
     # create a time vector for the x-axis of the plot
     time = np.linspace(0, last, n_steps)
 
@@ -47,50 +50,52 @@ def alpha_power(channel, sampling_rate, time, last, arr1, freq_range):
     power = 10 * np.log10(power) - 10 * np.log10(mean_power)
     return power, n_steps
 
-def alpha_power_all(sampling_rate, time, last, EEG_data2, freq_range = (8, 12), channel_name_1 = channel_name_1):
+def alpha_power_all(sampling_rate, time, last, EEG_data2, freq_range=(8, 12), channel_name_1=channel_name_1):
     first_point = mins_to_points(time, sampling_rate)
-    
+
     number_of_signals = EEG_data2.shape[0]
     ncols = 3
-    
+
     if number_of_signals <= ncols:
         nrows = 1
     else:
         nrows = math.ceil(number_of_signals / ncols)
-    
+
     if number_of_signals <= ncols:
-        fig, axs = plt.subplots(nrows=1, ncols=number_of_signals, figsize=(10, 4))
+        fig, axs = plt.subplots(nrows=1, ncols=number_of_signals, figsize=(16, 8), sharey=True)  # Set sharey=True
         channel_name = channel_name_2
     else:
-        fig, axs = plt.subplots(nrows=nrows, ncols=ncols, figsize=(10, 10))
+        fig, axs = plt.subplots(nrows=nrows, ncols=ncols, figsize=(10, 10), sharey=True)  # Set sharey=True
         channel_name = channel_name_1
+    plt.rcParams.update({'font.size': 24})
     fig.canvas.manager.set_window_title("{} Alpha power".format(time))
-    
+
     avg_power_difference = []
-    
+
     for channel in range(number_of_signals):
         arr1 = EEG_data2[channel][first_point:first_point + last * sampling_rate]
-        power, n_steps = alpha_power(channel, sampling_rate, time, last, arr1,freq_range)
+        power, n_steps = alpha_power(channel, sampling_rate, time, last, arr1, freq_range)
         time = np.linspace(0, last, n_steps)
-        
+
         row = channel // ncols
         col = channel % ncols
-        
+
         if number_of_signals <= ncols:
             axs[col].plot(time, power)  # dB
             axs[col].axvline(x=10, color='gray', linestyle='--')
             axs[col].axvline(x=33, color='gray', linestyle='--')
-            
+
             avg_power_period = np.mean(power[(time >= 10) & (time <= 33)])
             avg_power_rest = np.mean(power[(time < 10) | (time > 33)])
-            
+
             axs[col].axhline(y=avg_power_period, color='red', linestyle='--', xmin=10/last, xmax=33/last)
             axs[col].axhline(y=avg_power_rest, color='green', linestyle='--', xmin=0, xmax=10/last)
             axs[col].axhline(y=avg_power_rest, color='green', linestyle='--', xmin=33/last, xmax=1)
-            
+
             avg_power_difference.append(avg_power_period - avg_power_rest)
 
-            axs[col].set_title('{}, power difference:{:.2f}dB'.format(channel_name[channel], avg_power_period - avg_power_rest))
+            axs[col].set_title('{}'.format(channel_name_2[channel]), loc='left')
+
         else:
             axs[row, col].plot(time, power)  # dB
             axs[row, col].axvline(x=10, color='gray', linestyle='--')
@@ -106,34 +111,23 @@ def alpha_power_all(sampling_rate, time, last, EEG_data2, freq_range = (8, 12), 
             avg_power_difference.append(avg_power_period - avg_power_rest)
 
             axs[row, col].set_title('{}, power difference:{:.2f}dB'.format(channel_name[channel], avg_power_period - avg_power_rest))
-        
-    fig.text(0.5, 0.04, 'Time (Second)', ha='center', va='center')
-    fig.text(0.06, 0.5, 'Power spectral density (dB)', ha='center', va='center', rotation='vertical')
-    
-    for i in range(axs.shape[0] - 1):
-        if len(axs.shape) > 1:
-            for j in range(axs.shape[1]):
-                axs[i, j].tick_params(axis='x', which='both', bottom=False, top=False, labelbottom=False)
-        else:
-            axs[i].tick_params(axis='x', which='both', bottom=False, top=False, labelbottom=False)
+
+    fig.text(0.5, 0.02, 'Time (s)', ha='center', va='center')
+    fig.text(0.02, 0.5, 'Power spectral density (dB)', ha='center', va='center', rotation='vertical')
 
     plt.show()
     return avg_power_difference
 
-'''
-path = "D:/USYD/BMET4111/Electrode/data_collected/Extend_electrode/Straight_4_electride+2_fixed_reference_silver/Alpha_2023-04-28_15-15-51.bdf"
-
-hdl = edfreader.EDFreader(path)
-
-time_list = ["0.10", "1.10", "2.10", "3.10", "4.10"]
-sampling_rate = 5000
-last = 40
-power_diff_list = []
-for i in time_list:
-    average_diff = alpha_power_all(sampling_rate, i, last, hdl)
-    power_diff_list.append(average_diff)
-    print(average_diff)
-
-# Calculate the average value difference
-avg_diff_10_23 = np.mean(power_diff_list)
-'''
+if __name__ == "__main__":
+    path = "D:/USYD/BMET4111/Electrode/data_collected/Extend_electrode/Straight_4_electride+2_fixed_reference_silver/Alpha_2023-04-28_15-15-51.bdf"
+    
+    hdl = edfreader.EDFreader(path)
+    
+    time_list = ["0.10", "1.10", "2.10", "3.10", "4.10"]
+    sampling_rate = 5000
+    last = 40
+    power_diff_list = []
+    for i in time_list:
+        average_diff = alpha_power_all(sampling_rate, i, last, hdl)
+        power_diff_list.append(average_diff)
+        print(average_diff)

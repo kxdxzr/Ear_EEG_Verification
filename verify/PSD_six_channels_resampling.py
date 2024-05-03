@@ -9,7 +9,6 @@ import numpy as np
 import scipy.signal as signal
 import matplotlib.pyplot as plt
 import math
-import matplotlib.image as mpimg
 from SNR import find_SNR
 from montage.mean_and_replace import mean_and_replace
 from montage.subtract_and_replace import subtract_and_replace
@@ -31,7 +30,7 @@ def PD_EEG(sampling_rate,
            nperseg=10000,
            resolution=1,  # Number of points per Hz in the output
            extra_title='',
-           show_SNR = True):
+           show_SNR=True):
     first_point = mins_to_points(time, sampling_rate)
 
     number_of_signals = EEG_data.shape[0]
@@ -40,11 +39,11 @@ def PD_EEG(sampling_rate,
 
     if number_of_signals <= ncols:
         nrows = 1
-        fig, axs = plt.subplots(nrows=1, ncols=number_of_signals, figsize=(10, 4))
+        fig, axs = plt.subplots(nrows=1, ncols=number_of_signals, figsize=(16, 8), sharey=True)  # Set sharey=True
     else:
         nrows = math.ceil(number_of_signals / ncols)
-        fig, axs = plt.subplots(nrows=nrows, ncols=ncols, figsize=(10, 10))
-
+        fig, axs = plt.subplots(nrows=nrows, ncols=ncols, figsize=(10, 10), sharey=True)  # Set sharey=True
+    plt.rcParams.update({'font.size': 30})
     fig.canvas.manager.set_window_title("{}_{}".format(time, extra_title))
 
     for channel in range(number_of_signals):
@@ -69,7 +68,6 @@ def PD_EEG(sampling_rate,
             Pxx_resampled[i] = mid_value
         Pxx_resampled[-1] = np.median(Pxx_orig[f >= f_resampled[-1]])
 
-
         xlim_idx = np.logical_and(f_resampled >= xlim[0], f_resampled <= xlim[1])
         max_Pxx = np.max(Pxx_resampled[xlim_idx])
         min_Pxx = np.min(Pxx_resampled[xlim_idx])
@@ -83,6 +81,8 @@ def PD_EEG(sampling_rate,
             axs[col].plot(f_resampled, Pxx_resampled)  # dB
             if show_SNR:
                 axs[col].set_title('{}, SNR: {:.2f} dB'.format(channel_names[channel], SNR))
+            else:
+                axs[col].set_title('{}'.format(channel_names[channel]), loc='left')
             axs[col].set_xlim(xlim)
 
             if min_Pxx < 0:
@@ -98,6 +98,8 @@ def PD_EEG(sampling_rate,
             axs[row, col].plot(f_resampled, Pxx_resampled)  # dB
             if show_SNR:
                 axs[row, col].set_title('{}, SNR: {:.2f} dB'.format(channel_names[channel], SNR))
+            else:
+                axs[row, col].set_title('{}'.format(channel_names[channel]))
             axs[row, col].set_xlim(xlim)
             
             if min_Pxx < 0:
@@ -105,9 +107,8 @@ def PD_EEG(sampling_rate,
             elif min_Pxx >= 0:
                 axs[row, col].set_ylim([min_Pxx * 0.5, max_Pxx * 1.1])  # Set y-limit to be a multiple of max_Pxx
 
-    fig.text(0.5, 0.04, 'Frequency (Hz)', ha='center', va='center')
-    fig.text(0.06, 0.5, 'Power spectral density (dB)', ha='center', va='center', rotation='vertical')
-
+    fig.text(0.5, 0.025, 'Frequency (Hz)', ha='center', va='center')
+    fig.text(0.055, 0.5, 'Power spectral density (dB)', ha='center', va='center', rotation='vertical')
 
 if __name__ == "__main__":
     sampling_rate = 5000
@@ -116,3 +117,4 @@ if __name__ == "__main__":
     EEG_data, channel_names = load_EEG_all_channels(path=path, sampling_rate=sampling_rate)
     EEG_data = mean_and_replace(EEG_data, [6, 7, 8])
     PD_EEG(sampling_rate, "0:15", last, EEG_data, channel_names=channel_names, resolution=resolution)
+    plt.show()  # Add this line to display the plot

@@ -7,13 +7,15 @@ Created on Wed Aug 16 12:36:26 2023
 
 import numpy as np
 import matplotlib.pyplot as plt 
-from scipy.signal import stft, butter, lfilter, iirnotch
+from scipy.signal import stft
 from mins_to_points import mins_to_points
 import math
 from load_EEG_all_channels import load_EEG_all_channels
 
+plt.rcParams.update({'font.size': 10})
+
 channel_name_1 = ["T3", "T4", "T5", "T6", "O1", "O2", "1", "2", "3", "4", "Ref1", "Ref2"]
-channel_name_2 = ["Scalp","Ear"]
+channel_name_2 = ["a)", "b)"]
 
 Sampling_rate = 5000
 
@@ -21,8 +23,8 @@ def STFT(sampling_rate,
          time, 
          last, 
          EEG_data2, 
-         set_ylim = [1, 20],
-         channel_names = []):
+         set_ylim=[1, 20],
+         channel_names=[]):
     time_point = mins_to_points(time, sampling_rate)  # You need to define mins_to_points function
     window = 'hann'
     nperseg = int(sampling_rate * 1.5)
@@ -33,7 +35,7 @@ def STFT(sampling_rate,
     nrows = math.ceil(number_of_signals / ncols)
 
     if number_of_signals <= ncols:
-        fig, axs = plt.subplots(nrows=1, ncols=number_of_signals, figsize=(10, 4))
+        fig, axs = plt.subplots(nrows=1, ncols=number_of_signals, figsize=(18, 5))
         channel_name = channel_name_2
     else:
         fig, axs = plt.subplots(nrows=nrows, ncols=ncols, figsize=(10, 10))
@@ -52,9 +54,10 @@ def STFT(sampling_rate,
         if number_of_signals <= ncols:
             axs[col].pcolormesh(t, f, np.abs(Zxx), vmin=0, vmax=np.max(np.abs(Zxx)[f < 47]), shading='gouraud')
             axs[col].set_ylim(set_ylim)
-            axs[col].set_title('{}'.format(channel_name[channel]))
-            axs[col].set_ylabel('Frequency [Hz]')
-            axs[col].set_xlabel('Time [sec]')
+            axs[col].set_title('{}'.format(channel_names[channel]), loc='left')
+            #axs[col].set_xlabel('Time [sec]')
+            if col != 0:
+                axs[col].set_yticklabels([])  # Remove y-label for figures not in the first column
             if last == 40:
                 axs[col].axvline(x=32, color='red', linestyle='--')
                 axs[col].axvline(x=10, color='red', linestyle='--')
@@ -71,9 +74,10 @@ def STFT(sampling_rate,
         else:
             axs[row, col].pcolormesh(t, f, np.abs(Zxx), vmin=0, vmax=np.max(np.abs(Zxx)[f < 47]), shading='gouraud')
             axs[row, col].set_ylim(set_ylim)
-            axs[row, col].set_title('{}'.format(channel_name[channel]))
-            axs[row, col].set_ylabel('Frequency [Hz]')
+            axs[row, col].set_title('{}'.format(channel_name[channel]), loc='left')
             axs[row, col].set_xlabel('Time [sec]')
+            if col != 0:
+                axs[row, col].set_yticklabels([])  # Remove y-label for figures not in the first column
             if last == 40:
                 axs[row, col].axvline(x=32, color='red', linestyle='--')
                 axs[row, col].axvline(x=10, color='red', linestyle='--')
@@ -88,6 +92,9 @@ def STFT(sampling_rate,
                 axs[row, col].axhline(y=40, color='green', linestyle='--', xmin=40/last, xmax=60/last)
                 axs[row, col].axhline(y=43, color='green', linestyle='--', xmin=60/last, xmax=80/last)
                 axs[row, col].axhline(y=45, color='green', linestyle='--', xmin=80/last, xmax=100/last)
+    fig.text(0.5, 0.04, 'Time (s)', ha='center', va='center')
+    fig.text(0.01, 0.5, 'Frequency(Hz)', ha='center', va='center', rotation='vertical')
 
     fig.tight_layout()
+    plt.savefig('output_plot.png', format='png', dpi=100)  # Adjust the dpi
     plt.show()

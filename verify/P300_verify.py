@@ -18,7 +18,7 @@ sampling_rate = 5000
 time = '0.00'
 last = 1
 before_spike = 0.2
-vertical_lines = [0.3,0.4,0.8]
+vertical_lines = [0.3,0.4]
 vertical_color = ["Red","Red","Blue"]
 
 EEG_data, channel_names = load_EEG_all_channels(path = path, 
@@ -30,7 +30,7 @@ EEG_data = extract_only_signal(EEG_data, channel_names, ["pulse","standard"])
 EEG_data = mean_and_replace(EEG_data,[-3,-2,-1])
 EEG_data = extract_arrays(EEG_data,[1,-1])
 
-for i in range(0,10):
+for i in range(0,40):
     time = spike_time_points[i]
     plot_All_Channels_EEG(sampling_rate,
                           time,
@@ -38,11 +38,14 @@ for i in range(0,10):
                           EEG_data,
                           before_spike,
                           vertical_lines,
-                          channel_names = ["Scalp","Ear"],
+                          channel_names = ["a)","b)"],
                           vertical_color = vertical_color)
+    
+    '''
     PD_EEG(sampling_rate, 
                time,
                last, 
                EEG_data, 
                channel_names = ["Scalp","Ear"],
                xlim = [0,30])
+    '''
