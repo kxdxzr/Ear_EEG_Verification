@@ -17,7 +17,6 @@ from N_back_task_generator import N_back_task_generator
 
 generate_record_list = []
 Response_record_list = []
-path = "D:/USYD/BMET4111/Electrode/data_collected/Code/test/output.txt"
 now = datetime.now()
 formatted_date_time = now.strftime("N_back_%Y_%m_%d_%H_%M_%S.txt")
 

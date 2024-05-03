@@ -118,7 +118,7 @@ while True:
             window.close()
             break
             counting = False
-for i in range(1,10):
+for i in range(0,150):
     Main_GUI(i)
 now = datetime.now()
 formatted_date_time = now.strftime("%Y_%m_%d_%H_%M_%S.txt")
